@@ -47,101 +47,10 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Mock scheme database for AI responses
-  const mockSchemes: SchemeRecommendation[] = [
-    {
-      name: "PM Awas Yojana",
-      category: "Housing",
-      description: "Affordable housing for economically weaker sections",
-      eligibility: "Annual family income less than ₹6 lakhs",
-      benefits: "Subsidy up to ₹2.67 lakhs on home loans",
-      applicationLink: "#",
-    },
-    {
-      name: "Pradhan Mantri Scholarship Scheme",
-      category: "Education",
-      description: "Merit-based scholarship for higher education",
-      eligibility: "12th grade marks above 85%, family income < ₹8 lakhs",
-      benefits: "₹25,000 per year for 4 years",
-      applicationLink: "#",
-    },
-    {
-      name: "Ayushman Bharat",
-      category: "Healthcare",
-      description: "Health insurance coverage for families",
-      eligibility: "BPL families and specified occupational categories",
-      benefits: "Health coverage up to ₹5 lakhs per family per year",
-      applicationLink: "#",
-    },
-    {
-      name: "Skill India Mission",
-      category: "Employment",
-      description: "Skill development and training programs",
-      eligibility: "Age 18-35 years, any educational background",
-      benefits: "Free training + certification + job placement assistance",
-      applicationLink: "#",
-    },
-  ]
-
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
-
-  // Mock AI response generator
-  const generateAIResponse = (userMessage: string): { content: string; schemes?: SchemeRecommendation[] } => {
-    const lowerMessage = userMessage.toLowerCase()
-
-    // Housing related queries
-    if (lowerMessage.includes("housing") || lowerMessage.includes("home") || lowerMessage.includes("awas")) {
-      return {
-        content:
-          "I found some housing schemes that might interest you! The PM Awas Yojana is particularly popular for affordable housing.",
-        schemes: mockSchemes.filter((s) => s.category === "Housing"),
-      }
-    }
-
-    // Education related queries
-    if (lowerMessage.includes("education") || lowerMessage.includes("scholarship") || lowerMessage.includes("study")) {
-      return {
-        content:
-          "Here are some education and scholarship schemes available. These can help with your educational expenses.",
-        schemes: mockSchemes.filter((s) => s.category === "Education"),
-      }
-    }
-
-    // Healthcare related queries
-    if (lowerMessage.includes("health") || lowerMessage.includes("medical") || lowerMessage.includes("insurance")) {
-      return {
-        content: "I found healthcare schemes that provide medical coverage and benefits.",
-        schemes: mockSchemes.filter((s) => s.category === "Healthcare"),
-      }
-    }
-
-    // Employment related queries
-    if (lowerMessage.includes("job") || lowerMessage.includes("employment") || lowerMessage.includes("skill")) {
-      return {
-        content: "Here are employment and skill development schemes to help with career growth.",
-        schemes: mockSchemes.filter((s) => s.category === "Employment"),
-      }
-    }
-
-    // General eligibility check
-    if (lowerMessage.includes("eligible") || lowerMessage.includes("qualify")) {
-      return {
-        content:
-          "To check your eligibility, I'll need some information about your income, age, and specific requirements. Here are some popular schemes across categories:",
-        schemes: mockSchemes.slice(0, 2),
-      }
-    }
-
-    // Default response with all schemes
-    return {
-      content:
-        "I can help you with various government schemes! Here are some popular options across different categories:",
-      schemes: mockSchemes,
-    }
-  }
 
   // Handle sending messages
   const handleSendMessage = async () => {
@@ -158,20 +67,39 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
     setInputValue("")
     setIsLoading(true)
 
-    // Simulate AI processing delay
-    setTimeout(() => {
-      const aiResponse = generateAIResponse(inputValue)
+    // Call LangChain API route
+    try {
+      const res = await fetch("/api/langchain-bot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            ...messages.map((m) => ({ role: m.type === "user" ? "user" : "assistant", content: m.content })),
+            { role: "user", content: inputValue },
+          ],
+        }),
+      })
+      const data = await res.json()
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "bot",
-        content: aiResponse.content,
+        content: data.output,
         timestamp: new Date(),
-        schemes: aiResponse.schemes,
       }
-
       setMessages((prev) => [...prev, botMessage])
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 2).toString(),
+          type: "bot",
+          content: "Sorry, I couldn't process your request. Please try again.",
+          timestamp: new Date(),
+        },
+      ])
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   // Handle Enter key press

@@ -31,7 +31,12 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    if (isLoggedIn) fetchSchemes()
+    if (isLoggedIn) {
+      localStorage.setItem("govguide-admin", "true")
+      fetchSchemes()
+    } else {
+      localStorage.removeItem("govguide-admin")
+    }
   }, [isLoggedIn])
 
   // Admin login (username/password)
@@ -107,6 +112,12 @@ export default function AdminPage() {
       return
     }
     fetchSchemes()
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setAdminSession(false)
+    localStorage.removeItem("govguide-admin")
   }
 
   if (!isLoggedIn) {
