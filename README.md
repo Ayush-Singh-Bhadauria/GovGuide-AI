@@ -1,36 +1,169 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GovGuide AI
 
-## Getting Started
+GovGuide AI is a full-stack Next.js application that helps users discover, check eligibility for, and apply to government schemes in India. It features a personalized AI chatbot (powered by LangChain and OpenAI), user authentication, an admin panel for scheme management, and a comprehensive user profile system.
 
-First, run the development server:
+---
 
+## 🚀 Features
+
+- **Personalized AI Chatbot**: Chat with an AI assistant that recommends schemes based on your profile and answers queries about government benefits.
+- **User Authentication**: Secure registration, login, and session management using JWT cookies and MongoDB.
+- **Profile Management**: Edit and save detailed personal, socioeconomic, banking, and preference information.
+- **Scheme Discovery**: Browse, search, and apply for government schemes.
+- **Admin Panel**: Admins can add, edit, and delete schemes.
+- **Eligibility Engine**: The chatbot uses your profile to suggest the most relevant schemes.
+- **Modern UI**: Responsive, accessible, and visually appealing interface.
+
+---
+
+## 🏗️ Project Structure
+
+```
+app/
+  api/                # API routes (login, logout, profile, schemes, chatbot)
+  profile/            # User profile page
+  admin/              # Admin dashboard
+  ...
+components/           # UI components (chatbot, navigation, forms, etc.)
+contexts/             # React context (auth)
+mdoels/               # Mongoose models (user, scheme)
+src/lib/              # Utilities (dbconnect, auth)
+public/               # Static assets
+```
+
+---
+
+## 🛠️ Getting Started
+
+### 1. **Clone the Repository**
+```bash
+git clone git@github.com:Ayush-Singh-Bhadauria/GovGuide-AI.git
+cd GovGuide-AI
+```
+
+### 2. **Install Dependencies**
+```bash
+npm install
+# or
+yarn
+# or
+pnpm install
+```
+
+### 3. **Set Up Environment Variables**
+Create a `.env.local` file in the root directory:
+
+```
+MONGODB_URI=your_mongodb_connection_string
+OPENAI_API_KEY=your_openai_api_key
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+```
+
+- For production, use a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) URI.
+- Get your OpenAI API key from [OpenAI](https://platform.openai.com/account/api-keys).
+
+### 4. **Run the Development Server**
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌐 Deployment (Vercel)
 
-## Learn More
+1. **Push your code to GitHub.**
+2. **Import the repo on [Vercel](https://vercel.com/).**
+3. **Set environment variables in the Vercel dashboard:**
+   - `MONGODB_URI` (Atlas connection string)
+   - `OPENAI_API_KEY`
+   - `ADMIN_USERNAME`, `ADMIN_PASSWORD`
+4. **Deploy!**
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👤 User Guide
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Registration & Login
+- Sign up with your email and password.
+- Log in to access your personalized dashboard and chatbot.
 
-## Deploy on Vercel
+### Profile Management
+- Click on your profile to edit personal, socioeconomic, banking, and preference details.
+- All fields are saved securely in MongoDB.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Chatbot
+- Ask questions about government schemes, eligibility, or benefits.
+- The chatbot uses your profile and the latest schemes for personalized answers.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Admin Panel
+- Log in as admin to add, edit, or delete schemes.
+- Only accessible to users with admin credentials.
+
+---
+
+## 🧑‍💻 Developer Guide
+
+### Key Files
+- `app/api/profile/route.ts` — User profile API (GET/PUT)
+- `app/api/login/route.ts` — Login API
+- `app/api/langchain-bot/route.ts` — Chatbot API (LangChain + OpenAI)
+- `components/chatbot.tsx` — Chatbot UI
+- `contexts/auth-context.tsx` — Auth context
+- `mdoels/user.js` — User schema
+- `mdoels/scheme.js` — Scheme schema
+
+### Adding a New Scheme
+- Use the admin panel or add directly to MongoDB.
+
+### Customizing the Chatbot
+- Edit the prompt construction in `app/api/langchain-bot/route.ts` to change how user profile and schemes are injected.
+
+---
+
+## 📝 Example .env.local
+
+```
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/govguide?retryWrites=true&w=majority
+OPENAI_API_KEY=sk-...
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+```
+
+---
+
+## ❓ FAQ
+
+**Q: How do I reset my password?**
+A: Password reset is not implemented yet. Contact the admin for help.
+
+**Q: How do I add more fields to the user profile?**
+A: Update the user schema in `mdoels/user.js` and the profile form in `app/profile/page.tsx`.
+
+**Q: How do I make the chatbot more personalized?**
+A: The chatbot already receives the full user profile. You can further tune the prompt or add custom LangChain tools.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📄 License
+
+MIT
+
+---
+
+## 💬 Contact
+
+- [Ayush Singh Bhadauria](https://github.com/Ayush-Singh-Bhadauria)
+- Issues? Open one on GitHub!
