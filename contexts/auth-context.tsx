@@ -1,71 +1,69 @@
 "use client"
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
-
-interface User {
-  name: string
-  email: string
-}
+import React, { createContext, useContext, useEffect, useState } from "react"
 
 interface AuthContextType {
-  user: User | null
-  setUser: (user: User | null) => void
-  login: (user: User) => void
-  logout: () => void
+  user: any
   isLoading: boolean
+  login: (email: string, password: string) => Promise<boolean>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load user from localStorage on mount
-  useEffect(() => {
+  // Fetch user from session cookie
+  const fetchUser = async () => {
+    setIsLoading(true)
     try {
-      const savedUser = localStorage.getItem("govguide-user")
-      if (savedUser) {
-        setUser(JSON.parse(savedUser))
+      const res = await fetch("/api/profile")
+      if (res.ok) {
+        const data = await res.json()
+        setUser(data.user)
+      } else {
+        setUser(null)
       }
-    } catch (error) {
-      console.error("Error loading user from localStorage:", error)
-    } finally {
-      setIsLoading(false)
+    } catch {
+      setUser(null)
     }
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    fetchUser()
   }, [])
 
-  // Save user to localStorage whenever user state changes
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("govguide-user", JSON.stringify(user))
-    } else {
-      localStorage.removeItem("govguide-user")
+  // Call this after login
+  const login = async (email: string, password: string) => {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    })
+    if (res.ok) {
+      await fetchUser()
+      return true
     }
-  }, [user])
-
-  const login = (userData: User) => {
-    setUser(userData)
+    return false
   }
 
-  const logout = () => {
+  // Call this on logout
+  const logout = async () => {
+    await fetch("/api/logout", { method: "POST" })
     setUser(null)
-    localStorage.removeItem("govguide-user")
   }
 
-  const value = {
-    user,
-    setUser,
-    login,
-    logout,
-    isLoading,
-  }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext)
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider")

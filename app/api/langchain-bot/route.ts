@@ -6,7 +6,7 @@ import { ConversationChain } from "langchain/chains";
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json();
+    const { messages, userProfile } = await req.json();
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
     // Add schemes context to the prompt
     const schemesText = schemes.map((s) => `Title: ${s.title}\nDescription: ${s.description}\nCategory: ${s.category}\nEligibility: ${s.eligibility}`).join("\n\n");
     const userMessage = messages[messages.length - 1]?.content || "";
-    const prompt = `Here are all the government schemes in the database:\n\n${schemesText}\n\nUser: ${userMessage}`;
+    const userProfileText = userProfile ? `User Profile: ${JSON.stringify(userProfile, null, 2)}` : "";
+    const prompt = `Here are all the government schemes in the database:\n\n${schemesText}\n\n${userProfileText}\n\nUser: ${userMessage}`;
 
     const model = new ChatOpenAI({
       openAIApiKey: process.env.OPENAI_API_KEY,

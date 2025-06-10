@@ -39,19 +39,13 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        setError(data.error || "Invalid email or password. Please try again.")
+      // Use the auth context login function
+      const success = await login(email, password)
+      if (!success) {
+        setError("Invalid email or password. Please try again.")
         setIsLoading(false)
         return
       }
-      // Use the auth context login function
-      login(data.user)
       toast({
         title: "Login Successful",
         description: "Welcome back to GovGuide AI!",

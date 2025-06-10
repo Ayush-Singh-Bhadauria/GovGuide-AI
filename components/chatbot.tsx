@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { ScrollArea } from "./ui/scroll-area"
 import { Badge } from "./ui/badge"
 import { X, Maximize2, Minimize2, Send, Bot, User, BookOpen, Home, Heart, Briefcase } from "lucide-react"
+import { useAuth } from "../contexts/auth-context"
 
 interface Message {
   id: string
@@ -33,6 +34,7 @@ interface ChatBotProps {
 }
 
 export function ChatBot({ isOpen, onClose }: ChatBotProps) {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -77,6 +79,7 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
             ...messages.map((m) => ({ role: m.type === "user" ? "user" : "assistant", content: m.content })),
             { role: "user", content: inputValue },
           ],
+          userProfile: user, // Pass user profile for personalization
         }),
       })
       const data = await res.json()
