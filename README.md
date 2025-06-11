@@ -22,7 +22,7 @@ GovGuide AI is a full-stack Next.js application that helps users discover, check
   ![Screenshot 2025-06-11 141052](https://github.com/user-attachments/assets/95af8c2a-e704-47dc-99f8-56b771c1463b)
 
 
-![Screenshot 2025-06-11 140925](https://github.com/user-attachments/assets/6ab5d065-112b-4208-843b-12fb1a95deb4)
+     ![Screenshot 2025-06-11 140925](https://github.com/user-attachments/assets/6ab5d065-112b-4208-843b-12fb1a95deb4)
 
 ---
 ## Screenshots
