@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { Badge } from "../components/ui/badge"
 import { ChatBot } from "../components/chatbot"
 import { useAuth } from "../contexts/auth-context"
+import { useRouter } from "next/navigation"
 import {
   MessageCircle,
   Users,
@@ -23,6 +24,7 @@ import {
 export default function HomePage() {
   const { user } = useAuth()
   const [showChatbot, setShowChatbot] = useState(false)
+  const router = useRouter()
 
   // Enhanced featured schemes data with agriculture, women & child, and employment
   const featuredSchemes = [
@@ -130,6 +132,7 @@ export default function HomePage() {
               <Button
                 size="lg"
                 className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-500 text-white"
+                onClick={() => router.push("/login")}
               >
                 Get Started
               </Button>
@@ -204,7 +207,13 @@ export default function HomePage() {
             Our AI assistant can help you find schemes based on your specific situation, eligibility criteria, and
             requirements.
           </p>
-          <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowChatbot(true)}>
+          <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => {
+            if (!user) {
+              router.push("/login")
+            } else {
+              setShowChatbot(true)
+            }
+          }}>
             <MessageCircle className="mr-2 h-5 w-5" />
             Chat with AI Assistant
           </Button>
