@@ -19,11 +19,18 @@ export async function POST(req: NextRequest) {
     await dbConnect();
     const schemes = await Scheme.find({});
 
-    // Add schemes context to the prompt
-    const schemesText = schemes.map((s) => `Title: ${s.title}\nDescription: ${s.description}\nCategory: ${s.category}\nEligibility: ${s.eligibility}`).join("\n\n");
-    const userMessage = messages[messages.length - 1]?.content || "";
+    // Format chat history as a transcript
+    const chatHistory = messages
+      .map((msg: any) => {
+        if (msg.role === "user") return `User: ${msg.content}`;
+        if (msg.role === "assistant") return `Bot: ${msg.content}`;
+        return '';
+      })
+      .join("\n");
+
+    const schemesText = schemes.map((s) => `Title: ${s.title}\nDescription: ${s.description}\nCategory: ${s.category}\nEligibility: ${s.eligibility}${s.link ? `\nLink: ${s.link}` : ''}`).join("\n\n");
     const userProfileText = userProfile ? `User Profile: ${JSON.stringify(userProfile, null, 2)}` : "";
-    const prompt = `Here are all the government schemes in the database:\n\n${schemesText}\n\n${userProfileText}\n\nUser: ${userMessage}`;
+    const prompt = `Here are all the government schemes in the database:\n\n${schemesText}\n\n${userProfileText}\n\nConversation so far:\n${chatHistory}\n\nContinue the conversation as a helpful government schemes assistant.`;
 
     const model = new ChatOpenAI({
       openAIApiKey: process.env.OPENAI_API_KEY,
