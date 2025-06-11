@@ -14,7 +14,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [loginError, setLoginError] = useState("")
   const [schemes, setSchemes] = useState<any[]>([])
-  const [form, setForm] = useState({ title: "", description: "", category: "", eligibility: "" })
+  const [form, setForm] = useState({ title: "", description: "", category: "", eligibility: "", link: "" })
   const [editId, setEditId] = useState<string | null>(null)
   const [actionError, setActionError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -82,7 +82,7 @@ export default function AdminPage() {
       setActionError(data.error || "Failed to save scheme")
       return
     }
-    setForm({ title: "", description: "", category: "", eligibility: "" })
+    setForm({ title: "", description: "", category: "", eligibility: "", link: "" })
     setEditId(null)
     fetchSchemes()
   }
@@ -94,6 +94,7 @@ export default function AdminPage() {
       description: scheme.description,
       category: scheme.category || "",
       eligibility: scheme.eligibility || "",
+      link: scheme.link || "",
     })
     setEditId(scheme._id)
   }
@@ -221,6 +222,16 @@ export default function AdminPage() {
                   onChange={e => setForm(f => ({ ...f, eligibility: e.target.value }))}
                 />
               </div>
+              <div>
+                <Label htmlFor="link">Scheme Link</Label>
+                <Input
+                  id="link"
+                  value={form.link}
+                  onChange={e => setForm(f => ({ ...f, link: e.target.value }))}
+                  placeholder="https://..."
+                  type="url"
+                />
+              </div>
               {actionError && (
                 <Alert variant="destructive">
                   <AlertDescription>{actionError}</AlertDescription>
@@ -228,7 +239,7 @@ export default function AdminPage() {
               )}
               <Button type="submit" className="w-full">{editId ? "Update Scheme" : "Add Scheme"}</Button>
               {editId && (
-                <Button type="button" variant="outline" className="w-full mt-2" onClick={() => { setEditId(null); setForm({ title: "", description: "", category: "", eligibility: "" }) }}>Cancel Edit</Button>
+                <Button type="button" variant="outline" className="w-full mt-2" onClick={() => { setEditId(null); setForm({ title: "", description: "", category: "", eligibility: "", link: "" }) }}>Cancel Edit</Button>
               )}
             </form>
           </CardContent>
@@ -250,6 +261,11 @@ export default function AdminPage() {
                       <div className="text-sm text-muted-foreground">{scheme.description}</div>
                       {scheme.category && <div className="text-xs mt-1">Category: {scheme.category}</div>}
                       {scheme.eligibility && <div className="text-xs">Eligibility: {scheme.eligibility}</div>}
+                      {scheme.link && (
+                        <div className="text-xs mt-1">
+                          Link: <a href={scheme.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{scheme.link}</a>
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-2 mt-2 md:mt-0">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(scheme)}>Edit</Button>
