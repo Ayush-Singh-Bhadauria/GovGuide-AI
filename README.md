@@ -15,6 +15,12 @@ GovGuide AI is a full-stack Next.js application that helps users discover, check
 - **Modern UI**: Responsive, accessible, and visually appealing interface.
 
 ---
+## UML Diagram
+
+- Below is the UML diagram that illustrates the architecture and relationships of the application:
+
+  ![Screenshot 2025-06-11 141052](https://github.com/user-attachments/assets/95af8c2a-e704-47dc-99f8-56b771c1463b)
+
 
 ## 🏗️ Project Structure
 
