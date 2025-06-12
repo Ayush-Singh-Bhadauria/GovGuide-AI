@@ -10,6 +10,7 @@ import { ScrollArea } from "./ui/scroll-area"
 import { Badge } from "./ui/badge"
 import { X, Maximize2, Minimize2, Send, Bot, User, BookOpen, Home, Heart, Briefcase } from "lucide-react"
 import { useAuth } from "../contexts/auth-context"
+import ReactMarkdown from 'react-markdown'
 
 interface Message {
   id: string
@@ -200,7 +201,13 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
                     <div
                       className={`p-3 rounded-lg ${message.type === "user" ? "bg-blue-600 text-white" : "bg-muted"}`}
                     >
-                      <p className="text-sm">{message.content}</p>
+                      {message.type === "bot" ? (
+                        <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
+                          <ReactMarkdown>{message.content}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className="text-sm">{message.content}</p>
+                      )}
                     </div>
 
                     {/* Scheme Recommendations */}
