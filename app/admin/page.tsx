@@ -89,6 +89,7 @@ export default function AdminPage() {
 
   // Edit scheme
   const handleEdit = (scheme: any) => {
+    console.log('Editing scheme:', scheme); // Debug: log the scheme object
     setForm({
       title: scheme.title,
       description: scheme.description,
@@ -97,6 +98,11 @@ export default function AdminPage() {
       link: scheme.link || "",
     })
     setEditId(scheme._id)
+    // Scroll to the form for better UX
+    setTimeout(() => {
+      const formEl = document.getElementById('admin-scheme-form');
+      if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   }
 
   // Delete scheme
@@ -187,7 +193,7 @@ export default function AdminPage() {
             <CardTitle>{editId ? "Edit Scheme" : "Add New Scheme"}</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form id="admin-scheme-form" onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="title">Title</Label>
                 <Input
