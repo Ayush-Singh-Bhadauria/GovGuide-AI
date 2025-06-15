@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "../../components/ui/alert"
 import { Eye, EyeOff } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { schemeCategories } from "../../components/ui/scheme-categories"
+import Papa from "papaparse"
 
 export default function AdminPage() {
   const [username, setUsername] = useState("")
@@ -20,8 +21,12 @@ export default function AdminPage() {
   const [editId, setEditId] = useState<string | null>(null)
   const [actionError, setActionError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  // For demo, use a local session flag
   const [adminSession, setAdminSession] = useState(false)
+
+  // CSV upload state
+  const [csvError, setCsvError] = useState("")
+  const [csvSuccess, setCsvSuccess] = useState("")
+  const [csvLoading, setCsvLoading] = useState(false)
 
   // Fetch schemes
   const fetchSchemes = async () => {
@@ -129,6 +134,44 @@ export default function AdminPage() {
     localStorage.removeItem("govguide-admin")
   }
 
+  // CSV upload handler
+  const handleCSVUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCsvError("")
+    setCsvSuccess("")
+    const file = event.target.files?.[0]
+    if (!file) return
+    setCsvLoading(true)
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        if (!Array.isArray(results.data) || results.data.length === 0) {
+          setCsvError("CSV file is empty or invalid.")
+          setCsvLoading(false)
+          return
+        }
+        // Send to backend
+        const res = await fetch("/api/schemes/bulk-upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-admin-auth": "session" },
+          body: JSON.stringify({ schemes: results.data }),
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          setCsvError(data.error + (data.details ? ":\n" + data.details.join("\n") : ""))
+        } else {
+          setCsvSuccess(data.message)
+          fetchSchemes()
+        }
+        setCsvLoading(false)
+      },
+      error: (err) => {
+        setCsvError("Failed to parse CSV: " + err.message)
+        setCsvLoading(false)
+      },
+    })
+  }
+
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -195,6 +238,15 @@ export default function AdminPage() {
             <CardTitle>{editId ? "Edit Scheme" : "Add New Scheme"}</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* CSV Upload Section */}
+            <div className="mb-6">
+              <Label htmlFor="csv-upload">Bulk Upload Schemes (CSV)</Label>
+              <Input id="csv-upload" type="file" accept=".csv" onChange={handleCSVUpload} disabled={csvLoading} />
+              {csvLoading && <div className="text-sm text-muted-foreground mt-1">Uploading...</div>}
+              {csvError && <Alert variant="destructive"><AlertDescription>{csvError}</AlertDescription></Alert>}
+              {csvSuccess && <Alert variant="success"><AlertDescription>{csvSuccess}</AlertDescription></Alert>}
+              <div className="text-xs text-muted-foreground mt-1">CSV must have columns: title, description, category, eligibility, link</div>
+            </div>
             <form id="admin-scheme-form" onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="title">Title</Label>
