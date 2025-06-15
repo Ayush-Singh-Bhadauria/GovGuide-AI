@@ -198,3 +198,34 @@ MIT
 
 - [Ayush Singh Bhadauria](https://github.com/Ayush-Singh-Bhadauria)
 - Issues? Open one on GitHub!
+
+---
+
+## ⚡️ Chatbot Optimizations: Token & Retrieval Efficiency
+
+GovGuide AI's chatbot is designed for both cost-efficiency and high relevance using advanced token and retrieval optimization techniques. Here’s how it works under the hood:
+
+### 1. Token Utilization Optimization
+- **Trimmed Chat History:** Only the last 5 user/assistant messages are included in the prompt, reducing unnecessary context and token usage.
+- **Scheme Summarization:** Each government scheme is summarized before being sent to the LLM (title, first 100 chars of description, category, first 80 chars of eligibility, and link). This ensures only the most important information is used.
+- **Concise System Prompt:** The system prompt instructs the model to keep answers crisp, concise, and under 100 words unless more detail is requested. Markdown formatting is encouraged for readability.
+- **Max Token Limit:** The OpenAI API is called with a strict `maxTokens` limit to prevent runaway responses and control costs.
+
+### 2. Retrieval Optimization (Embeddings-Based)
+- **Embeddings for Relevance:** For every user query, the chatbot:
+  1. Embeds the latest user message using OpenAI embeddings.
+  2. Embeds each summarized scheme (title, description, category, eligibility).
+  3. Calculates cosine similarity between the user query and each scheme.
+  4. Selects only the top 5 most relevant schemes to include in the prompt.
+- **Result:** The LLM only sees the most relevant, summarized schemes, not the entire database, making responses faster, cheaper, and more accurate.
+
+### 3. Privacy & Persona
+- **Built-in Knowledge Persona:** The chatbot is instructed to never mention or imply that it is receiving data from the user, a database, or an API. It always responds as if it has built-in, up-to-date knowledge of all schemes and user profiles, like a fine-tuned expert model.
+
+---
+
+**Why?**
+- These optimizations dramatically reduce OpenAI API costs and latency, while improving the quality and relevance of answers for users.
+- The approach is scalable to thousands of schemes and users, and can be further tuned for even greater efficiency.
+
+---
