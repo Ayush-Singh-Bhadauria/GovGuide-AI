@@ -48,6 +48,7 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
   const [inputValue, setInputValue] = useState("")
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [pendingProfileField, setPendingProfileField] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Scroll to bottom when new messages arrive
@@ -57,7 +58,63 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
 
   // Handle sending messages
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return
+    if (!inputValue.trim()) return;
+
+    // If waiting for a profile field, update profile instead of normal chat
+    if (pendingProfileField) {
+      setIsLoading(true);
+      const value = inputValue.trim();
+      try {
+        // Update profile field
+        const res = await fetch("/api/profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ [pendingProfileField]: value }),
+        });
+        if (res.ok) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now().toString(),
+              type: "user",
+              content: value,
+              timestamp: new Date(),
+            },
+            {
+              id: (Date.now() + 1).toString(),
+              type: "bot",
+              content: `Thank you! Your ${pendingProfileField} has been updated. Please continue your query or ask about schemes.`,
+              timestamp: new Date(),
+            },
+          ]);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: (Date.now() + 2).toString(),
+              type: "bot",
+              content: `Sorry, failed to update your ${pendingProfileField}. Please try again or update your profile manually.`,
+              timestamp: new Date(),
+            },
+          ]);
+        }
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 3).toString(),
+            type: "bot",
+            content: `Sorry, something went wrong updating your ${pendingProfileField}.`,
+            timestamp: new Date(),
+          },
+        ]);
+      } finally {
+        setPendingProfileField(null);
+        setInputValue("");
+        setIsLoading(false);
+      }
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -83,7 +140,10 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
           userProfile: user, // Pass user profile for personalization
         }),
       })
-      const data = await res.json()
+      const data = await res.json();
+      if (data.needsProfileField) {
+        setPendingProfileField(data.needsProfileField);
+      }
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "bot",
