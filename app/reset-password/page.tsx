@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "../../components/ui/input"
@@ -53,39 +53,41 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md space-y-6 rounded bg-white p-8 shadow"
-      >
-        <h1 className="text-2xl font-bold">Reset Password</h1>
-        {error && <div className="text-red-500">{error}</div>}
-        {success ? (
-          <div className="text-green-600">Password reset! Redirecting to login...</div>
-        ) : (
-          <>
-            <Input
-              type="password"
-              placeholder="New password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-            <Input
-              type="password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Resetting..." : "Reset Password"}
-            </Button>
-          </>
-        )}
-      </form>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md space-y-6 rounded bg-white p-8 shadow"
+        >
+          <h1 className="text-2xl font-bold">Reset Password</h1>
+          {error && <div className="text-red-500">{error}</div>}
+          {success ? (
+            <div className="text-green-600">Password reset! Redirecting to login...</div>
+          ) : (
+            <>
+              <Input
+                type="password"
+                placeholder="New password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+              <Input
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? "Resetting..." : "Reset Password"}
+              </Button>
+            </>
+          )}
+        </form>
+      </div>
+    </Suspense>
   )
 }
