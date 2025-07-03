@@ -1,59 +1,56 @@
 "use client"
 
-import { Suspense, useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "../../components/ui/input"
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "../../components/ui/input";
 
-function ResetPasswordForm() {
-  const router = useRouter()
-  const [token] = useState(() => {
-    if (typeof window === "undefined") return null
-    const url = new URL(window.location.href)
-    return url.searchParams.get("token")
-  })
+export default function ResetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
     if (!token) {
-      setError("Invalid or missing token.")
-      return
+      setError("Invalid or missing token.");
+      return;
     }
     if (!password || password.length < 6) {
-      setError("Password must be at least 6 characters.")
-      return
+      setError("Password must be at least 6 characters.");
+      return;
     }
     if (password !== confirmPassword) {
-      setError("Passwords do not match.")
-      return
+      setError("Passwords do not match.");
+      return;
     }
-    setLoading(true)
+    setLoading(true);
     try {
       const res = await fetch("/api/forgot-password", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),
-      })
+      });
       if (!res.ok) {
-        const data = await res.json()
-        setError(data.error || "Failed to reset password.")
+        const data = await res.json();
+        setError(data.error || "Failed to reset password.");
       } else {
-        setSuccess(true)
-        setTimeout(() => router.push("/login"), 2000)
+        setSuccess(true);
+        setTimeout(() => router.push("/login"), 2000);
       }
     } catch (err) {
-      setError("Something went wrong. Please try again.")
+      setError("Something went wrong. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -90,13 +87,5 @@ function ResetPasswordForm() {
         )}
       </form>
     </div>
-  )
-}
-
-export default function ResetPasswordPage() {
-  return (
-    <Suspense fallback={<div>Loading reset form...</div>}>
-      <ResetPasswordForm />
-    </Suspense>
-  )
+  );
 }
