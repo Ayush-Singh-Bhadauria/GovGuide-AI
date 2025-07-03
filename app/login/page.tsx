@@ -153,6 +153,16 @@ export default function LoginPage() {
               </Button>
             </form>
 
+            {/* Google Login Button */}
+            <Button
+              type="button"
+              className="w-full bg-white border border-green-200 dark:border-green-800 text-green-700 hover:bg-green-50 flex items-center justify-center space-x-2 mb-4"
+              onClick={() => window.location.href = "/api/auth/signin?provider=google"}
+            >
+              <svg width="20" height="20" viewBox="0 0 48 48" className="mr-2"><g><path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C36.68 2.36 30.77 0 24 0 14.82 0 6.71 5.1 2.69 12.55l8.01 6.22C12.33 13.13 17.73 9.5 24 9.5z"/><path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.42-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.02l7.19 5.6C43.98 37.36 46.1 31.45 46.1 24.55z"/><path fill="#FBBC05" d="M10.7 28.77c-1.01-2.9-1.01-6.04 0-8.94l-8.01-6.22C.68 17.23 0 20.51 0 24s.68 6.77 2.69 10.39l8.01-6.22z"/><path fill="#EA4335" d="M24 48c6.48 0 11.92-2.15 15.89-5.85l-7.19-5.6c-2.01 1.35-4.59 2.15-8.7 2.15-6.27 0-11.67-3.63-13.3-8.77l-8.01 6.22C6.71 42.9 14.82 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></g></svg>
+              <span>Continue with Google</span>
+            </Button>
+
             {/* Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">

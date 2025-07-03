@@ -49,12 +49,67 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [pendingProfileField, setPendingProfileField] = useState<string | null>(null);
+  const [listening, setListening] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const recognitionRef = useRef<any>(null);
+  const [userLang, setUserLang] = useState("en-IN"); // default to Indian English
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  // Simple language detection (matches backend)
+  function detectLanguage(text: string): string {
+    const devnagari = /[\u0900-\u097F]/;
+    if (devnagari.test(text)) return "hi-IN";
+    const hinglishWords = ["kya", "hai", "kaunsa", "karna", "set", "kar", "sakta", "sakti", "aap", "mera", "mere", "hain", "ho", "ka", "ke", "ki", "tum", "profile", "update", "dhanyavaad", "poochh", "scheme", "baare"];
+    const lower = text.toLowerCase();
+    if (hinglishWords.some(w => lower.includes(w))) return "en-IN";
+    return "en-IN";
+  }
+
+  // Voice input handler
+  const handleVoiceInput = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech recognition not supported in this browser.");
+      return;
+    }
+    if (!recognitionRef.current) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.maxAlternatives = 1;
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInputValue(transcript);
+        setUserLang(detectLanguage(transcript));
+        setListening(false);
+      };
+      recognitionRef.current.onerror = () => setListening(false);
+      recognitionRef.current.onend = () => setListening(false);
+    }
+    recognitionRef.current.lang = userLang;
+    setListening(true);
+    recognitionRef.current.start();
+  };
+
+  // Voice output (TTS)
+  function speak(text: string, lang: string = "en-IN") {
+    if (!window.speechSynthesis) return;
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Speak bot message on new message
+  useEffect(() => {
+    if (voiceEnabled && messages.length > 0 && messages[messages.length - 1].type === "bot") {
+      speak(messages[messages.length - 1].content, userLang);
+    }
+    // eslint-disable-next-line
+  }, [messages, voiceEnabled])
 
   // Handle sending messages
   const handleSendMessage = async () => {
@@ -349,6 +404,23 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
               className="flex-1 border-green-200 dark:border-green-800 focus:border-green-500"
               disabled={isLoading}
             />
+            <Button
+              onClick={handleVoiceInput}
+              disabled={isLoading || listening}
+              className="bg-green-100 hover:bg-green-200 text-green-700"
+              type="button"
+              title="Speak"
+            >
+              {listening ? "🎙️..." : "🎤"}
+            </Button>
+            <Button
+              onClick={() => setVoiceEnabled((v) => !v)}
+              className={voiceEnabled ? "bg-green-100 hover:bg-green-200 text-green-700" : "bg-gray-200 hover:bg-gray-300 text-gray-500"}
+              type="button"
+              title={voiceEnabled ? "Disable Voice Output" : "Enable Voice Output"}
+            >
+              {voiceEnabled ? "🔊 Voice On" : "🔇 Voice Off"}
+            </Button>
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
