@@ -41,9 +41,10 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const { token, newPassword } = await req.json();
-  if (!token || !newPassword) {
-    return NextResponse.json({ error: "Token and new password are required" }, { status: 400 });
+  // Accept { token, password } in request body
+  const { token, password } = await req.json();
+  if (!token || !password) {
+    return NextResponse.json({ error: "Token and password are required" }, { status: 400 });
   }
   const data = resetTokens.get(token);
   if (!data || data.expires < Date.now()) {
@@ -54,7 +55,7 @@ export async function PUT(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
-  user.hashed_password = newPassword;
+  user.hashed_password = password; // Will be hashed by pre-save hook
   await user.save();
   resetTokens.delete(token);
   return NextResponse.json({ message: "Password has been reset successfully." });
