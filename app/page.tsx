@@ -108,43 +108,27 @@ export default function HomePage() {
       <section className="relative py-20 px-4 bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50 dark:from-green-950/20 dark:via-blue-950/20 dark:to-emerald-950/20">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-            Welcome to <span className="text-green-600 dark:text-green-400">GovGuide AI</span>
+            Welcome to <span className="text-green-600 dark:text-green-400">Nagrik Mitra AI</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             Your intelligent companion for discovering and accessing government schemes, scholarships, and benefits
             tailored to your needs.
           </p>
 
-          {user ? (
-            <div className="space-y-4">
+          { /* Hero Section button: always show chatbot button */ }
+          <div className="space-y-4">
+            {user && (
               <p className="text-lg text-green-600 dark:text-green-400 font-medium">Welcome back, {user.name}! 👋</p>
-              <Button
-                size="lg"
-                className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-500 text-white"
-                onClick={() => setShowChatbot(true)}
-              >
-                <MessageCircle className="mr-2 h-5 w-5" />
-                Start AI Assistant
-              </Button>
-            </div>
-          ) : (
-            <div className="space-x-4">
-              <Button
-                size="lg"
-                className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-500 text-white"
-                onClick={() => router.push("/login")}
-              >
-                Get Started
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-green-200 dark:border-green-800 hover:bg-green-50 dark:hover:bg-green-950/20"
-              >
-                Learn More
-              </Button>
-            </div>
-          )}
+            )}
+            <Button
+              size="lg"
+              className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-500 text-white"
+              onClick={() => setShowChatbot(true)}
+            >
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Start AI Assistant
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -207,13 +191,7 @@ export default function HomePage() {
             Our AI assistant can help you find schemes based on your specific situation, eligibility criteria, and
             requirements.
           </p>
-          <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => {
-            if (!user) {
-              router.push("/login")
-            } else {
-              setShowChatbot(true)
-            }
-          }}>
+          <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowChatbot(true)}>
             <MessageCircle className="mr-2 h-5 w-5" />
             Chat with AI Assistant
           </Button>

@@ -1,5 +1,5 @@
 {
-  "name": "govguide-ai",
+  "name": "nagrikmitra-ai",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-cloud/text-to-speech": "^6.1.0",
     "@google/generative-ai": "^0.24.1",
     "@langchain/google-genai": "^0.2.10",
     "@langchain/openai": "^0.5.12",
@@ -46,6 +47,8 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "ibm-cloud-sdk-core": "^3.2.2",
+    "ibm-watson": "^7.1.2",
     "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^0.3.28",

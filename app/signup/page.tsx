@@ -93,7 +93,7 @@ export default function SignUpPage() {
       login({ name: formData.name, email: formData.email })
       toast({
         title: "Account Created Successfully",
-        description: "Welcome to GovGuide AI! You can now access personalized scheme recommendations.",
+        description: "Welcome to Nagrik Mitra AI! You can now access personalized scheme recommendations.",
       })
       router.push("/")
     } catch (error) {
@@ -124,7 +124,7 @@ export default function SignUpPage() {
               <span className="text-white font-bold text-lg">G</span>
             </div>
             <CardTitle className="text-2xl">Create Your Account</CardTitle>
-            <CardDescription>Join GovGuide AI to get personalized government scheme recommendations</CardDescription>
+            <CardDescription>Join Nagrik Mitra AI to get personalized government scheme recommendations</CardDescription>
           </CardHeader>
 
           <CardContent>
@@ -295,7 +295,7 @@ export default function SignUpPage() {
         {/* Benefits Card */}
         <Card className="mt-4 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
           <CardContent className="pt-4">
-            <h3 className="font-medium text-green-700 dark:text-green-300 mb-2">Why join GovGuide AI?</h3>
+            <h3 className="font-medium text-green-700 dark:text-green-300 mb-2">Why join Nagrik Mitra AI?</h3>
             <ul className="text-sm text-green-600 dark:text-green-400 space-y-1">
               <li>• Personalized scheme recommendations</li>
               <li>• AI-powered eligibility checking</li>

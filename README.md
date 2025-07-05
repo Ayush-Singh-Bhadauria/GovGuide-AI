@@ -1,6 +1,6 @@
-# GovGuide AI
+# Nagrik Mitra AI
 
-GovGuide AI is a full-stack Next.js application that helps users discover, check eligibility for, and apply to government schemes in India. It features a personalized AI chatbot (powered by LangChain and OpenAI), user authentication, an admin panel for scheme management, and a comprehensive user profile system.
+Nagrik Mitra AI is a full-stack Next.js application that helps users discover, check eligibility for, and apply to government schemes in India. It features a personalized AI chatbot (powered by LangChain and OpenAI), user authentication, an admin panel for scheme management, and a comprehensive user profile system.
 
 ---
 
@@ -68,8 +68,8 @@ public/               # Static assets
 
 ### 1. **Clone the Repository**
 ```bash
-git clone git@github.com:Ayush-Singh-Bhadauria/GovGuide-AI.git
-cd GovGuide-AI
+git clone git@github.com:Ayush-Singh-Bhadauria/Nagrik-Mitra-AI.git
+cd Nagrik-Mitra-AI
 ```
 
 ### 2. **Install Dependencies**
@@ -161,7 +161,7 @@ Visit [http://localhost:3000](http://localhost:3000) to view the app.
 ## 📝 Example .env.local
 
 ```
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/govguide?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/nagrikmitra?retryWrites=true&w=majority
 OPENAI_API_KEY=sk-...
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
@@ -203,7 +203,7 @@ MIT
 
 ## ⚡️ Chatbot Optimizations: Token & Retrieval Efficiency
 
-GovGuide AI's chatbot is designed for both cost-efficiency and high relevance using advanced token and retrieval optimization techniques. Here’s how it works under the hood:
+Nagrik Mitra AI's chatbot is designed for both cost-efficiency and high relevance using advanced token and retrieval optimization techniques. Here’s how it works under the hood:
 
 ### 1. Token Utilization Optimization
 - **Trimmed Chat History:** Only the last 5 user/assistant messages are included in the prompt, reducing unnecessary context and token usage.

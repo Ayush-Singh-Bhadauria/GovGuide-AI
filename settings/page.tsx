@@ -540,7 +540,7 @@ export default function SettingsPage() {
                   <Palette className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
                   Appearance Settings
                 </CardTitle>
-                <CardDescription>Customize how GovGuide AI looks and feels</CardDescription>
+                <CardDescription>Customize how Nagrik Mitra AI looks and feels</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleAppearanceSubmit} className="space-y-6">

@@ -14,7 +14,7 @@ export default function ClientRoot({ children }: { children: React.ReactNode }) 
         defaultTheme="light"
         enableSystem
         disableTransitionOnChange={false}
-        storageKey="govguide-theme"
+        storageKey="nagrikmitra-theme"
       >
         <AuthProvider>
           <Navigation />

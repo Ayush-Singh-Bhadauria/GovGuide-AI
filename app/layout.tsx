@@ -8,7 +8,7 @@ import ClientRoot from "../components/ClientRoot"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "GovGuide AI - Your Government Schemes Assistant",
+  title: "Nagrik Mitra AI - Your Government Schemes Assistant",
   description: "Discover and access government schemes, scholarships, and benefits with AI assistance",
     generator: 'v0.dev'
 }

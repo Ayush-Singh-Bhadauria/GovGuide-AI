@@ -39,10 +39,10 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      localStorage.setItem("govguide-admin", "true")
+      localStorage.setItem("nagrikmitra-admin", "true")
       fetchSchemes()
     } else {
-      localStorage.removeItem("govguide-admin")
+      localStorage.removeItem("nagrikmitra-admin")
     }
   }, [isLoggedIn])
 
@@ -131,7 +131,7 @@ export default function AdminPage() {
   const handleLogout = () => {
     setIsLoggedIn(false)
     setAdminSession(false)
-    localStorage.removeItem("govguide-admin")
+    localStorage.removeItem("nagrikmitra-admin")
   }
 
   // CSV upload handler

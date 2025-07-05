@@ -48,7 +48,7 @@ export default function LoginPage() {
       }
       toast({
         title: "Login Successful",
-        description: "Welcome back to GovGuide AI!",
+        description: "Welcome back to Nagrik Mitra AI!",
       })
       router.push("/")
     } catch (error) {
@@ -80,7 +80,7 @@ export default function LoginPage() {
             </div>
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>
-              Sign in to your GovGuide AI account to access personalized scheme recommendations
+              Sign in to your Nagrik Mitra AI account to access personalized scheme recommendations
             </CardDescription>
           </CardHeader>
 

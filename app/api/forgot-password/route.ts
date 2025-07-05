@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   await transporter.sendMail({
     from: process.env.SMTP_USER,
     to: email,
-    subject: "GovGuide AI Password Reset",
+    subject: "Nagrik Mitra AI Password Reset",
     text: `Click the link to reset your password: ${resetUrl}`,
     html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. This link is valid for 15 minutes.</p>`
   });
@@ -55,8 +55,9 @@ export async function PUT(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
+  // Always allow password reset: update hashed_password so Google users can now log in with email/password
   user.hashed_password = password; // Will be hashed by pre-save hook
   await user.save();
   resetTokens.delete(token);
-  return NextResponse.json({ message: "Password has been reset successfully." });
+  return NextResponse.json({ message: "Password has been reset successfully. You can now log in with your email and new password." });
 }

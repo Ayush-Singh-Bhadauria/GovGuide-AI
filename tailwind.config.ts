@@ -52,7 +52,7 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom green color palette for GovGuide AI
+        // Custom green color palette for Nagrik Mitra AI
         "gov-green": {
           50: "#f0fdf4",
           100: "#dcfce7",

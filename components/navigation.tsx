@@ -38,7 +38,7 @@ export function Navigation() {
                   <span className="text-white font-bold text-sm">G</span>
                 </div>
                 <span className="font-bold text-xl text-foreground">
-                  GovGuide <span className="text-green-600 dark:text-green-400">AI</span>
+                  Nagrik Mitra <span className="text-green-600 dark:text-green-400">AI</span>
                 </span>
               </Link>
             </div>
@@ -60,7 +60,7 @@ export function Navigation() {
                 <span className="text-white font-bold text-sm">G</span>
               </div>
               <span className="font-bold text-xl text-foreground">
-                GovGuide <span className="text-green-600 dark:text-green-400">AI</span>
+                Nagrik Mitra <span className="text-green-600 dark:text-green-400">AI</span>
               </span>
             </Link>
           </div>

@@ -36,12 +36,14 @@ interface ChatBotProps {
 
 export function ChatBot({ isOpen, onClose }: ChatBotProps) {
   const { user } = useAuth();
+  // Track last spoken bot message
+  const [lastSpokenId, setLastSpokenId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       type: "bot",
       content:
-        "Hello! I'm your GovGuide AI assistant. I can help you find government schemes, scholarships, and check your eligibility. What would you like to know?",
+        "Hello! I'm your Nagrik Mitra AI assistant. I can help you find government schemes, scholarships, and check your eligibility. What would you like to know?",
       timestamp: new Date(),
     },
   ])
@@ -95,7 +97,7 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
     recognitionRef.current.start();
   };
 
-  // Voice output (TTS)
+  // Browser TTS
   function speak(text: string, lang: string = "en-IN") {
     if (!window.speechSynthesis) return;
     const utterance = new window.SpeechSynthesisUtterance(text);
@@ -103,10 +105,35 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
     window.speechSynthesis.speak(utterance);
   }
 
-  // Speak bot message on new message
+  // IBM Watson TTS function (calls /api/tts)
+  async function speakWithWatsonTTS(text: string, lang = "en-IN") {
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, lang }),
+      });
+      const data = await res.json();
+      if (data.audioContent) {
+        const audio = new Audio("data:audio/mp3;base64," + data.audioContent);
+        audio.play();
+      }
+    } catch (e) {
+      // fallback to browser TTS if error
+      speak(text, lang);
+    }
+  }
+
+  // Speak bot message on new message, but only once per message
   useEffect(() => {
-    if (voiceEnabled && messages.length > 0 && messages[messages.length - 1].type === "bot") {
-      speak(messages[messages.length - 1].content, userLang);
+    if (
+      voiceEnabled &&
+      messages.length > 0 &&
+      messages[messages.length - 1].type === "bot" &&
+      messages[messages.length - 1].id !== lastSpokenId
+    ) {
+      speakWithWatsonTTS(messages[messages.length - 1].content, userLang);
+      setLastSpokenId(messages[messages.length - 1].id);
     }
     // eslint-disable-next-line
   }, [messages, voiceEnabled])
@@ -265,7 +292,7 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
               <Bot className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground">GovGuide AI Assistant</h3>
+              <h3 className="font-semibold text-foreground">Nagrik Mitra AI Assistant</h3>
               <p className="text-sm text-muted-foreground">Government Schemes Expert</p>
             </div>
           </div>
