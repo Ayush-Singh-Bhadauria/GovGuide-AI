@@ -20,10 +20,13 @@ import {
   GraduationCap,
   Building,
 } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover"
+import Image from "next/image"
 
 export default function HomePage() {
   const { user } = useAuth()
   const [showChatbot, setShowChatbot] = useState(false)
+  const [initialPrompt, setInitialPrompt] = useState("")
   const router = useRouter()
 
   // Enhanced featured schemes data with agriculture, women & child, and employment
@@ -107,28 +110,28 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50 dark:from-green-950/20 dark:via-blue-950/20 dark:to-emerald-950/20">
         <div className="max-w-7xl mx-auto text-center">
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            <Image src="/logo.png" alt="Nagrik Mitra Logo" width={120} height={120} className="rounded-lg" priority />
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
             Welcome to <span className="text-green-600 dark:text-green-400">Nagrik Mitra AI</span>
           </h1>
+          {/* Show Chatbot button if user is logged in */}
+          {user && (
+            <div className="flex justify-center mb-6">
+              <Button
+                className="rounded-full px-8 py-3 text-lg shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 transition"
+                onClick={() => setShowChatbot(true)}
+              >
+                Open Chatbot
+              </Button>
+            </div>
+          )}
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             Your intelligent companion for discovering and accessing government schemes, scholarships, and benefits
             tailored to your needs.
           </p>
-
-          { /* Hero Section button: always show chatbot button */ }
-          <div className="space-y-4">
-            {user && (
-              <p className="text-lg text-green-600 dark:text-green-400 font-medium">Welcome back, {user.name}! 👋</p>
-            )}
-            <Button
-              size="lg"
-              className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-500 text-white"
-              onClick={() => setShowChatbot(true)}
-            >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              Start AI Assistant
-            </Button>
-          </div>
         </div>
       </section>
 
@@ -191,15 +194,48 @@ export default function HomePage() {
             Our AI assistant can help you find schemes based on your specific situation, eligibility criteria, and
             requirements.
           </p>
-          <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowChatbot(true)}>
-            <MessageCircle className="mr-2 h-5 w-5" />
-            Chat with AI Assistant
-          </Button>
         </div>
       </section>
 
-      {/* Chatbot Component */}
-      {showChatbot && <ChatBot isOpen={showChatbot} onClose={() => setShowChatbot(false)} />}
+      {/* Floating Chatbot Button with Pre-written Prompts */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              className="rounded-full shadow-lg bg-green-600 hover:bg-green-700 text-white w-16 h-16 flex items-center justify-center text-3xl"
+              aria-label="Open Chatbot"
+            >
+              <MessageCircle className="w-8 h-8" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-64 p-4">
+            <div className="mb-2 font-semibold text-green-700">Quick Start Prompts</div>
+            <div className="flex flex-col gap-0">
+              <Button variant="outline" size="sm" className="justify-start whitespace-normal break-words text-left max-w-full mb-2" onClick={() => { setInitialPrompt("What housing schemes are available?"); setShowChatbot(true); }}>
+                🏠 What housing schemes are available?
+              </Button>
+              <Button variant="outline" size="sm" className="justify-start whitespace-normal break-words text-left max-w-full mb-2" onClick={() => { setInitialPrompt("Show me education scholarships"); setShowChatbot(true); }}>
+                🎓 Show me education scholarships
+              </Button>
+              <Button variant="outline" size="sm" className="justify-start whitespace-normal break-words text-left max-w-full mb-2" onClick={() => { setInitialPrompt("Check my eligibility for schemes"); setShowChatbot(true); }}>
+                ✅ Check my eligibility for schemes
+              </Button>
+              <Button variant="outline" size="sm" className="justify-start whitespace-normal break-words text-left max-w-full" onClick={() => { setInitialPrompt(""); setShowChatbot(true); }}>
+                💬 Start a new chat
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      {/* Chatbot Component (floating/modal) */}
+      {showChatbot && (
+        <ChatBot
+          isOpen={showChatbot}
+          onClose={() => { setShowChatbot(false); setInitialPrompt(""); }}
+          initialPrompt={initialPrompt}
+        />
+      )}
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { Suspense, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "../../components/ui/input"
+import Image from "next/image"
 
 function ResetPasswordForm() {
   const router = useRouter()
@@ -57,38 +58,44 @@ function ResetPasswordForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md space-y-6 rounded bg-white p-8 shadow"
-      >
-        <h1 className="text-2xl font-bold">Reset Password</h1>
-        {error && <div className="text-red-500">{error}</div>}
-        {success ? (
-          <div className="text-green-600">Password reset! Redirecting to login...</div>
-        ) : (
-          <>
-            <Input
-              type="password"
-              placeholder="New password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-            <Input
-              type="password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Resetting..." : "Reset Password"}
-            </Button>
-          </>
-        )}
-      </form>
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="flex justify-center mb-4">
+          <Image src="/logo.png" alt="Nagrik Mitra Logo" width={96} height={96} className="rounded-lg bg-white" priority />
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md space-y-6 rounded bg-white p-8 shadow"
+        >
+          <h1 className="text-2xl font-bold">Reset Password</h1>
+          {error && <div className="text-red-500">{error}</div>}
+          {success ? (
+            <div className="text-green-600">Password reset! Redirecting to login...</div>
+          ) : (
+            <>
+              <Input
+                type="password"
+                placeholder="New password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+              <Input
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? "Resetting..." : "Reset Password"}
+              </Button>
+            </>
+          )}
+        </form>
+      </div>
     </div>
   )
 }

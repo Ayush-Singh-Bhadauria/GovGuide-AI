@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Input } from "../../components/ui/input"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -29,29 +30,35 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Forgot Password</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              disabled={loading}
-            />
-            {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
-            {message && <Alert variant="success"><AlertDescription>{message}</AlertDescription></Alert>}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Sending..." : "Send Reset Link"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="flex justify-center mb-2">
+          <Image src="/logo.png" alt="Nagrik Mitra Logo" width={128} height={128} className="rounded-lg bg-white" priority />
+        </div>
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>Forgot Password</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                disabled={loading}
+              />
+              {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
+              {message && <Alert variant="success"><AlertDescription>{message}</AlertDescription></Alert>}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Sending..." : "Send Reset Link"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

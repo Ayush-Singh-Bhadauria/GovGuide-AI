@@ -14,6 +14,7 @@ import { Checkbox } from "../../components/ui/checkbox"
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from "lucide-react"
 import { useToast } from "../../hooks/use-toast"
 import { useAuth } from "../../contexts/auth-context"
+import Image from "next/image"
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
@@ -106,6 +107,10 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="flex justify-center mb-2">
+          <Image src="/logo.png" alt="Nagrik Mitra Logo" width={128} height={128} className="rounded-lg bg-white" priority />
+        </div>
         {/* Back to Home Link */}
         <div className="mb-6">
           <Link

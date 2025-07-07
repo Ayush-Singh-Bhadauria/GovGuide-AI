@@ -19,25 +19,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const user = session?.user || null
   const isLoading = status === "loading"
 
-  // NextAuth login (email/password fallback to custom, Google uses signIn)
+  // NextAuth login (Google or credentials)
   const login = async (email?: string, password?: string) => {
     if (!email && !password) {
-      // Google or other OAuth
       await signIn("google")
       return true
     }
-    // Fallback: custom email/password login
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+    // Use NextAuth credentials provider
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
     })
-    if (res.ok) {
-      // After custom login, force NextAuth session update
-      await signIn("credentials", { redirect: false })
-      return true
-    }
-    return false
+    return res?.ok === true
   }
 
   const logout = async () => {

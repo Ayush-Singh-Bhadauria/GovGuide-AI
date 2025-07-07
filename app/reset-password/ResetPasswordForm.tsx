@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "../../components/ui/input";
+import Image from "next/image";
 
 export default function ResetPasswordForm() {
   const router = useRouter();
@@ -58,6 +59,9 @@ export default function ResetPasswordForm() {
         onSubmit={handleSubmit}
         className="w-full max-w-md space-y-6 rounded bg-white p-8 shadow"
       >
+        <div className="flex justify-center mb-2">
+          <Image src="/logo.png" alt="Nagrik Mitra Logo" width={128} height={128} className="rounded-lg bg-white" priority />
+        </div>
         <h1 className="text-2xl font-bold">Reset Password</h1>
         {error && <div className="text-red-500">{error}</div>}
         {success ? (

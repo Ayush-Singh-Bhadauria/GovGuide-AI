@@ -480,7 +480,29 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-    return NextResponse.json({ output: response.response });
+    // Intent filtering: only include applicationLink if user intent is to apply
+    const applyIntentKeywords = [
+      "apply", "application", "register", "enroll", "enrol", "submit", "fill form", "how to apply", "where to apply", "get benefit"
+    ];
+    const userMsgLower = (latestUserMsg || "").toLowerCase();
+    const isApplyIntent = applyIntentKeywords.some(k => userMsgLower.includes(k));
+    const topSchemesForFrontend = scoredSchemes.slice(0, 1).map(s => {
+      const schemeObj: any = {
+        name: s.title,
+        category: s.category,
+        description: s.description,
+        eligibility: s.eligibility,
+        benefits: allSchemes.find(a => a.title === s.title)?.benefits || ""
+      };
+      if (isApplyIntent) {
+        schemeObj.applicationLink = s.link || "";
+      }
+      return schemeObj;
+    });
+    return NextResponse.json({
+      output: response.response,
+      schemes: topSchemesForFrontend
+    });
   } catch (error) {
     console.error("OpenAI API error:", error);
     return NextResponse.json(

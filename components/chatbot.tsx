@@ -32,9 +32,10 @@ interface SchemeRecommendation {
 interface ChatBotProps {
   isOpen: boolean
   onClose: () => void
+  initialPrompt?: string
 }
 
-export function ChatBot({ isOpen, onClose }: ChatBotProps) {
+export function ChatBot({ isOpen, onClose, initialPrompt }: ChatBotProps) {
   const { user } = useAuth();
   // Track last spoken bot message
   const [lastSpokenId, setLastSpokenId] = useState<string | null>(null);
@@ -47,7 +48,7 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
       timestamp: new Date(),
     },
   ])
-  const [inputValue, setInputValue] = useState("")
+  const [inputValue, setInputValue] = useState(initialPrompt || "")
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [pendingProfileField, setPendingProfileField] = useState<string | null>(null);
@@ -124,26 +125,12 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
     }
   }
 
-  // Speak bot message on new message, but only once per message
-  useEffect(() => {
-    if (
-      voiceEnabled &&
-      messages.length > 0 &&
-      messages[messages.length - 1].type === "bot" &&
-      messages[messages.length - 1].id !== lastSpokenId
-    ) {
-      speakWithWatsonTTS(messages[messages.length - 1].content, userLang);
-      setLastSpokenId(messages[messages.length - 1].id);
-    }
-    // eslint-disable-next-line
-  }, [messages, voiceEnabled])
-
   // Handle sending messages
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    // If waiting for a profile field, update profile instead of normal chat
-    if (pendingProfileField) {
+    // Only allow profile update if user is logged in
+    if (pendingProfileField && user) {
       setIsLoading(true);
       const value = inputValue.trim();
       try {
@@ -196,6 +183,9 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
         setIsLoading(false);
       }
       return;
+    } else if (pendingProfileField && !user) {
+      // If not logged in, skip profile update and treat as normal chat
+      setPendingProfileField(null);
     }
 
     const userMessage: Message = {
@@ -223,6 +213,7 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
         }),
       })
       const data = await res.json();
+      console.log("BOT RESPONSE SCHEMES: ", data.schemes); // Debug log
       if (data.needsProfileField) {
         setPendingProfileField(data.needsProfileField);
       }
@@ -231,8 +222,14 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
         type: "bot",
         content: data.output,
         timestamp: new Date(),
+        schemes: data.schemes || [],
       }
       setMessages((prev) => [...prev, botMessage])
+      // Speak immediately after adding the message
+      if (voiceEnabled) {
+        speakWithWatsonTTS(botMessage.content, userLang)
+        setLastSpokenId(botMessage.id)
+      }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
@@ -271,6 +268,15 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
         return BookOpen
     }
   }
+
+  // Auto-send initialPrompt if provided and not empty
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim()) {
+      setInputValue(initialPrompt)
+      handleSendMessage()
+    }
+    // eslint-disable-next-line
+  }, [initialPrompt])
 
   if (!isOpen) return null
 
@@ -378,9 +384,22 @@ export function ChatBot({ isOpen, onClose }: ChatBotProps) {
                                     <strong>Benefits:</strong> {scheme.benefits}
                                   </p>
                                 </div>
-                                <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white">
-                                  Apply Now
-                                </Button>
+                                <div className="pt-2">
+                                  <Button
+                                    size="sm"
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow-sm transition-colors duration-150 border-2 border-red-500"
+                                    onClick={() => {
+                                      console.log("Apply link:", scheme.applicationLink); // Debug log
+                                      if (scheme.applicationLink) {
+                                        window.open(scheme.applicationLink, '_blank', 'noopener');
+                                      } else {
+                                        alert("No application link available.");
+                                      }
+                                    }}
+                                  >
+                                    Apply Now
+                                  </Button>
+                                </div>
                               </CardContent>
                             </Card>
                           )

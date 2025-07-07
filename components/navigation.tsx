@@ -15,6 +15,7 @@ import {
 import { ThemeToggle } from "./theme-toggle"
 import { useAuth } from "../contexts/auth-context"
 import { Home, FileText, User, LogOut, Settings, CreditCard, Bell } from "lucide-react"
+import Image from "next/image"
 
 export function Navigation() {
   const { user, logout, isLoading } = useAuth()
@@ -56,8 +57,15 @@ export function Navigation() {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-green-600 dark:bg-green-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">G</span>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <Image
+                  src="/logo.png"
+                  alt="Nagrik Mitra Logo"
+                  width={64}
+                  height={64}
+                  className="rounded-lg bg-white"
+                  priority
+                />
               </div>
               <span className="font-bold text-xl text-foreground">
                 Nagrik Mitra <span className="text-green-600 dark:text-green-400">AI</span>
